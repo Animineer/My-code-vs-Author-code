@@ -16,8 +16,9 @@ dotenv.config();
 const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
+//this app is imported from lib/socket.js
 app.use(express.json());
-app.use(cookieParser());
+app.use(cookieParser());// to parse the cookies from the incoming requests (from req.cookies).
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -36,6 +37,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+// server is imported from socket.js, because we need to start the server after the socket server is created and listening to the same port as the http server
 server.listen(PORT, () => {
   console.log("server is running on PORT:" + PORT);
   connectDB();

@@ -6,15 +6,15 @@ import { io } from "socket.io-client";
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
 export const useAuthStore = create((set, get) => ({
-  authUser: null,
-  isSigningUp: false,
-  isLoggingIn: false,
+  authUser: null, //1.intiall state of authUser will be null (we don't know if the user is authenticated or not when the app loads, so we set it to null, and then we will check if the user is authenticated or not in the checkAuth function and update the authUser state accordingly)
+  isSigningUp: false, //loading for signup process while create account (loading ... in button)
+  isLoggingIn: false, 
   isUpdatingProfile: false,
-  isCheckingAuth: true,
+  isCheckingAuth: true, //2.for loading state when we check if the user is authenticated or not when the app loads
   onlineUsers: [],
   socket: null,
 
-  checkAuth: async () => {
+  checkAuth: async () => { //3.(in app.jsx) this function will be called when the app loads to check if the user is authenticated or not
     try {
       const res = await axiosInstance.get("/auth/check");
 
@@ -24,7 +24,7 @@ export const useAuthStore = create((set, get) => ({
       console.log("Error in checkAuth:", error);
       set({ authUser: null });
     } finally {
-      set({ isCheckingAuth: false });
+      set({ isCheckingAuth: false }); //loading is false
     }
   },
 

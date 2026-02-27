@@ -7,6 +7,7 @@ import { getReceiverSocketId, io } from "../lib/socket.js";
 export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
+    //ne is not equal to , -password is not included in the result
     const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
 
     res.status(200).json(filteredUsers);
@@ -18,13 +19,17 @@ export const getUsersForSidebar = async (req, res) => {
 
 export const getMessages = async (req, res) => {
   try {
-    const { id: userToChatId } = req.params;
+
+
+    //in route we have /api/messages/:id, so req.params.id will give us the id of the user I'm chatting with
+    const { id: userToChatId } = req.params; // this is the id of the user I'm chatting with
     const myId = req.user._id;
 
+
     const messages = await Message.find({
-      $or: [
-        { senderId: myId, receiverId: userToChatId },
-        { senderId: userToChatId, receiverId: myId },
+      $or: [ // we want to get messages where either the sender is me and the receiver is the user I'm chatting with, or the sender is the user I'm chatting with and the receiver is me
+        { senderId: myId, receiverId: userToChatId }, //this is for messages sent by me to the user I'm chatting with
+        { senderId: userToChatId, receiverId: myId }, //this is for messages sent by the user I'm chatting with to me
       ],
     });
 
@@ -35,6 +40,8 @@ export const getMessages = async (req, res) => {
   }
 };
 
+
+//it could be used for both text and image messages, 
 export const sendMessage = async (req, res) => {
   try {
     const { text, image } = req.body;
@@ -49,10 +56,10 @@ export const sendMessage = async (req, res) => {
     }
 
     const newMessage = new Message({
-      senderId,
-      receiverId,
+      senderId, //us
+      receiverId, //the user I'm chatting with
       text,
-      image: imageUrl,
+      image: imageUrl, //cloudinary 
     });
 
     await newMessage.save();

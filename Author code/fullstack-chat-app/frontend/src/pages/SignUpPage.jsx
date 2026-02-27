@@ -16,6 +16,8 @@ const SignUpPage = () => {
 
   const { signup, isSigningUp } = useAuthStore();
 
+
+  //validation
   const validateForm = () => {
     if (!formData.fullName.trim()) return toast.error("Full name is required");
     if (!formData.email.trim()) return toast.error("Email is required");
@@ -26,6 +28,7 @@ const SignUpPage = () => {
     return true;
   };
 
+  //submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -128,7 +131,7 @@ const SignUpPage = () => {
               ) : (
                 "Create Account"
               )}
-            </button>
+            </button>  
           </form>
 
           <div className="text-center">

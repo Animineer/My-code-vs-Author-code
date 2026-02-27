@@ -18,11 +18,17 @@ export const signup = async (req, res) => {
 
     if (user) return res.status(400).json({ message: "Email already exists" });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // HASH PASSWORD HERE
+		const salt = await bcrypt.genSalt(10); 
+		//bcrypt is used to has the password
+		//gensalt() method is used to generate a salt. 
+		// It takes one argument: the number of rounds to use when generating the salt. 
+		// The higher the number, the more secure the salt will be, but it will also take more time to generate.
+		const hashedPassword = await bcrypt.hash(password, salt);
+    //hash() method is used to hash the password. It takes two arguments: the password to hash and the salt to use when hashing the password.
 
-    const newUser = new User({
-      fullName,
+    const newUser = new User({ //here we are creating a new user object using the User model and passing the required fields to it.
+      fullName,//since variable name and field name are same we can write like this instead of fullName:fullName
       email,
       password: hashedPassword,
     });
@@ -55,8 +61,9 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    //here first parameter is the plain text password that user entered and 
+		// the second parameter is the hashed password stored in the database.
+		   const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
@@ -108,7 +115,9 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-export const checkAuth = (req, res) => {
+export const checkAuth = (req, res) => {//this controller will called ever time when the user refresh the page 
+// or open the app in new tab, to check if the user is authenticated or not, and to get the user data from the token 
+// and send it to the frontend, so that we can use it in the frontend to show the user data in the navbar and other places where we need it.
   try {
     res.status(200).json(req.user);
   } catch (error) {
